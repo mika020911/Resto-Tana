@@ -1,4 +1,4 @@
-import nouritureIcon from "../assets/nouriture.png";
+import nouritureIcon from "../assets/nourriture.png";
 import MalagasyIcon from "../assets/madagascar.png";
 import CroissantIcon  from "../assets/croissant.png";
 import gastroIcon from "../assets/ratatouille.png";
