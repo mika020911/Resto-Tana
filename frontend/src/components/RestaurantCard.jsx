@@ -4,7 +4,10 @@ export default function RestaurantCard({resto}){
             {/*photo*/}
 
             <div className=" relative h-48 overflow-hidden rounded-t-[20px]">
-                <img src="resto.photo" alt="resto.nom" className="w-full h-full object-cover" />
+                <img 
+                src={resto.photo} 
+                alt={resto.nom} 
+                className="w-full h-full object-cover" />
             
             <div className="absolute top-3 right-3 bg-white/90 rounded-full px-3 py-1 text-xs font-bold text-dark">
             {resto.tempsLivraison}
@@ -25,8 +28,8 @@ export default function RestaurantCard({resto}){
                 <span className="text-xs text-dark/50 ">{resto.quartier}</span>
             </div>
 
-            <p className="w-full bg-dark text-white py-3 rounded-full font-semibold hover: opacity-90 transition-opacity text-sm">{resto.description}</p>
-            <button>Voir le menu</button>
+            <p>{resto.description}</p>
+            <button  className="w-full bg-dark text-white py-3 rounded-full font-semibold hover: opacity-90 transition-opacity text-sm">Voir le menu</button>
             </div>
         </div>
         
