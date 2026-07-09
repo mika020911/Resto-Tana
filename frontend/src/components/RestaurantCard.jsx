@@ -1,4 +1,8 @@
+import {useNavigate} from "react-router-dom";
+
 export default function RestaurantCard({resto}){
+    const navigate = useNavigate();
+
     return(
         <div className="glass-card overflow-hidden hover:-translate-y-1 transition-transform cursor-pointer">
             {/*photo*/}
@@ -29,7 +33,10 @@ export default function RestaurantCard({resto}){
             </div>
 
             <p>{resto.description}</p>
-            <button  className="w-full bg-dark text-white py-3 rounded-full font-semibold hover: opacity-90 transition-opacity text-sm">Voir le menu</button>
+            <button  
+            className="w-full bg-dark text-white py-3 rounded-full font-semibold hover: opacity-90 transition-opacity text-sm"
+            onClick={() => navigate(`/restaurant/${resto.id}`)}
+            >Voir le menu</button>
             </div>
         </div>
         
