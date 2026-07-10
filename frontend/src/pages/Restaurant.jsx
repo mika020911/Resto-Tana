@@ -70,8 +70,41 @@ export default function Restaurant() {
                 
               ))}
             </div>
+           </div>
+           {/* Avis */}
+           <div className="glass-card p-5 mt-6">
+            <h2 className="font-bold text-dark text-lg mb-4"> Avis et commentaires</h2>
+              
+              {/* Etoile */}
+              <div>
+                {[1,2,3,4,5].map((star) => (
+                  <button key={star} className="text-3xl hover:scale-110 transition-transform">
+                    ⭐
+                  </button>
+                ))}
+              </div>
+
+              {/* Nom */}
+              <input
+              type="text"
+              placeholder="Votre nom"
+              className="w-full bg-white/60 rounded-xl px-4 py-3 mt-3 mb-3 outline-none text-dark placeholder:text-dark/40 "
+              />
+              {/* Commentaire */}
+              <textarea
+              placeholder="Votre commentaires ...."
+               rows={3}     
+                className="w-full bg-white/60 rounded-xl px-4 py-3 outline-none text-dark placeholder;text-dark/40 resize-none"
+              />
+
+              
+              <button className="bg-dark text-white px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-opacity mt-3">
+                Envoyer l'avis 
+              </button>
+              
 
            </div>
+
     </main>
   );
 }

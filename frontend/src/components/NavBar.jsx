@@ -1,3 +1,4 @@
+import {Link} from "react-router-dom";
 export default function NavBar() {
     return(
         <nav className="flex items-center justify-between px-6 md:px-12 py-4 sticky top-0 z-50 glass-card mx-4 mt-4 mb-2 ">
@@ -8,7 +9,7 @@ export default function NavBar() {
             </div>
 
             <div className="flex items-center justify-between px-5 gap-6">
-                <a href="#" className="text-dark/70 hover:text-dark font-medium transition-colors">Home</a>
+                 <Link to="/" className="text-dark/70 hover:text-dark font-medium transition-colors">Home</Link>
                 <a href="#" className="text-dark/70 hover:text-dark font-medium transition-colors">Restaurants</a>
                 <a href="#" className="text-dark/70 hover:text-dark font-medium transition-colors">Categories</a>
             </div>
