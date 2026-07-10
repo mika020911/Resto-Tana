@@ -43,6 +43,35 @@ export default function Restaurant() {
                 <span className="text-xs bg-orange-100 text-orange-500 font-medium px-3 py-1 rounded-full">{resto.categorie}</span>
               </div>
             </div>
+            {/* Description */}
+            <div className="glass-card p-5 mb-6">
+              <h2 className="font-bold text-dark text-lg mb-2">
+                A propos
+              </h2>
+              <p className="text-dark/70 leading-relaxed ">{resto.description}</p>
+
+            </div>
+            {/* Menu */}
+           <div className="glass-card p-5">
+            <h2 className="font-bold text-dark text-lg mb-4">Menu</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {resto.menu.map((plat) =>(
+                <div
+                key={plat.id} 
+                className="flex items-center justify-between bg-white/60 rounded-2xl p-4">
+                  <div>
+                  <p className="font-semibold text-dark">{plat.nom}</p>
+                  <p className="text-dark/50 text-sm">{plat.description}</p>
+                  <span className="text-xs bg-orange-100 text-orange-500 font-medium px-2 py-1 rounded-full mt-1 inline-block">{plat.categorie}
+                  </span>
+                  </div>
+                  <p className="font-bold text-dark ml-4 whitespace-nowrap">{plat.prix.toLocaleString()} Ar</p>
+                </div>
+                
+              ))}
+            </div>
+
+           </div>
     </main>
   );
 }
