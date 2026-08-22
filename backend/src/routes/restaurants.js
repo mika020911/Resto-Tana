@@ -26,14 +26,16 @@ router.get("/:id", async (req, res) => {
             return res.status(404).json({ status: "error", message: "Restaurant not found" });
         }
         const menuResult = await pool.query(
-            'select id, nom, commentaire, created_at from reviews where restaurant_id = $1 order by created_at desc', [id]
+            'select id, nom, commentaire, created_at from menu_items where restaurant_id = $1 order by created_at desc', [id]
         );
-     
+        const reviewsResult = await pool.query(
+            'select id, nom, commentaire, note, created_at from reviews where restaurant_id = $1 order by created_at desc', [id]
+        );
 
         res.json({
             ...resultRestaurant.rows[0],
             menu: menuResult.rows,
-            //reviews: reviewsResult.rows,
+            reviews: reviewsResult.rows,
         });
     } catch (err) {
         console.error(err.message);
