@@ -21,6 +21,7 @@ router.post("/register", async (req, res) => {
         const result = await pool.query(
             "insert into users (nom, email, mot_de_passe_hash) values ($1, $2, $3) returning id, nom, email, created_at",[nom, email, hash]);
         const user = result.rows[0];
+        
         const token = jwt.sign({userId : user.id}, process.env.JWT_SECRET, {expiresIn: "7d"});
         
         res.status(201).json({user, token});
