@@ -6,7 +6,7 @@ require("dotenv").config();// charge les variable de .env
 
 const categoriesRouter = require("./routes/categories");
 const restaurantsRouter = require("./routes/restaurants");
-
+const authRouter = require("./routes/auth");
 
 
 const app = express();
@@ -14,6 +14,8 @@ app.use(cors());
 app.use(express.json());// permet de recuperer le body des requettes en json
 app.use("/api/categories", categoriesRouter);
 app.use("/api/restaurants", restaurantsRouter);
+app.use("/api/auth", authRouter);
+
 //ROUTES de test verifie que le serveur + connnnexion BD ok//
 app.get("/api/health", async (req, res) => {
     try {
