@@ -2,6 +2,10 @@ const express = require("express");
 const pool = require ("../db");
 const router = express.Router();
 const requireAuth = require("../middleware/auth");
+const multer = require ("multer");
+const supabase = require ("../supabaseClient")
+
+const upload = multer({storage:multer.memoryStorage()});
 
 // get all restaurants
 router.get("/", async (req, res) => {
@@ -26,10 +30,10 @@ router.get("/:id", async (req, res) => {
             return res.status(404).json({ status: "error", message: "Restaurant not found" });
         }
         const menuResult = await pool.query(
-            'select id, nom, commentaire, created_at from menu_items where restaurant_id = $1 order by created_at desc', [id]
+            'select id, nom, prix, description, categorie, created_at from menu_items where restaurant_id = $1 order by created_at desc', [id]
         );
         const reviewsResult = await pool.query(
-            'select id, nom, commentaire, note, created_at from reviews where restaurant_id = $1 order by created_at desc', [id]
+            'select id, commentaire, note, created_at from reviews where restaurant_id = $1 order by created_at desc', [id]
         );
 
         res.json({
@@ -58,4 +62,42 @@ router.post("/", requireAuth, async (req, res) => {
         res.status(500).json({ status: "error", message: err.message });
     }
 });
+//upload post api/restaurant/:id/photo
+router.post("/:id/photo", requireAuth, upload.single("photo"), async (req, res)=>{
+    const {id} = req.params;
+
+    if(!req.file){
+        return res.status(400).json({staus:"error",  message:"no files received"});
+    }
+    try{
+        const restaurantResult = await pool.query("select user_id from restarants where id= $1", [id]);
+        if (restaurantResult.rows.length === 0){
+            return res.status(404).json({status:"error", message:"Restaurant not found"});
+        }
+        if (restaurantResult.rows[0].user_id != req.userId) {
+            return res.status(403).json({status:"error", message:"Your are not owner of this restaurant"});
+        }
+         const fileName = `${id}-${Date.now()}-${req.file.originalname}`;
+
+         const {error:uploadError} = await supabase.storage
+         .from("restaurant-photo")
+         .upload(fileName, req.file.buffer, {contentType: req.file.mimetype});  
+
+         if (uploadError){
+            console.err(uploadError.message);
+        return res.status(500).json({status:"error", message:"upload echec"});
+         }
+         const {data:publicUrlData} = supabase.storage.from("restaurant-photos").getPublicUrl(fileName);
+
+         const updateResult = await pool.query (
+            "update restaurants set photo_url_path = $1 where id =$2 returning *", [publicUrlData.publicUrl, id]
+         );
+         res.json(updateResult.rows[0]);
+    }catch (err){
+        console.error(err.message);
+        res.status(500).json({status:"error", message:err.message});
+    }
+})
+
+
 module.exports = router;

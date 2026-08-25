@@ -1,11 +1,32 @@
 import { useParams } from "react-router-dom";
-import { restaurants } from "../data/restaurant";
+import { fetchRestaurantById } from "../services/api";
+import { useEffect, useState } from "react";
 
 export default function Restaurant() {
-  const { id } = useParams();
-  const resto = restaurants.find((r) => r.id === parseInt(id));
+  const {id} = useParams ();
+  const [resto , setResto] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] =useState (false);
 
-  if (!resto) {
+  useEffect(()=>{
+    async function loadData() {
+      try {
+        const data = await fetchRestaurantById(id);
+        setResto(data);
+      }catch (err){
+        console.error(err);
+        setError(true);
+      }finally{
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, [id]);
+
+  if (loading) {
+    return(<main className="px-4 md:px-12 py-6 text-center">Chargement en cours</main>)
+  }
+  if(error || !resto){
     return (
       <div className="text-center py-20">
         <span className="text-5xl">😕</span>
@@ -18,13 +39,13 @@ export default function Restaurant() {
     <main className="px-4 md:px-12 py-6">
             <div className="relative h-64 md:h-80 rounded-3xl overflow-hidden mb-6">
                 <img
-                src={resto.photo}
+                src={resto.photo_url}
                 alt={resto.nom}
                 className="w-full h-full object-cover"
                 />
                 <div classname="absolute inset-0 bg-black/30"/> 
                 <div className="absolute bottom-6 left-6 text-white">
-                  <h1 className="text-3xl md:text-4xl font-extrabold">{resto.nom}</h1>
+                  <h1 className="text-3xl md:text-4xl font-extrabold" >{resto.nom}</h1>
                   <p className="text-white/80 mt-1">{resto.adresse}</p>
                 </div> 
             </div>
@@ -33,11 +54,11 @@ export default function Restaurant() {
               <div className="flex items-center gap-2">
                 <span>⭐</span>
                 <span className="font-bold text-dark">{resto.note}</span>
-                <span className="text-dark/40">({resto.avis} avis)</span>
+                <span className="text-dark/40">({resto.nombre_avis} avis)</span>
               </div>
               <div className="flex items-center gap-2">
                 <span>⏱️</span>
-                <span className="text-dark/70">{resto.tempsLivraison}</span>
+                <span className="text-dark/70">{resto.temps_livraiseon}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs bg-orange-100 text-orange-500 font-medium px-3 py-1 rounded-full">{resto.categorie}</span>
@@ -76,21 +97,25 @@ export default function Restaurant() {
             <h2 className="font-bold text-dark text-lg mb-4"> Avis et commentaires</h2>
               
               {/* Etoile */}
-              <div>
-                {[1,2,3,4,5].map((star) => (
-                  <button key={star} className="text-3xl hover:scale-110 transition-transform">
-                    ⭐
-                  </button>
-                ))}
+              <div className="space-y-3 mb-4">
+                {resto.reviews.length === 0 && (
+                  <p className="text-dark/50 text-sm">Aucun Avis pour le moment</p>
+                )}
+               {resto.reviews.map((rev)=>(
+                <div key={rev.id} className="bg-white/60 rounded-xl p-3">
+                  <span className="text-orange-500 font-bold ">{"⭐".repeat(rev.note)}</span>
+                  {rev.commentaire && <p className="text-dark/70 text-sm mt-1">{rev.commentaire}</p>}
+                </div>
+               ))}
               </div>
 
-              {/* Nom */}
+              {/* Nom 
               <input
               type="text"
               placeholder="Votre nom"
               className="w-full bg-white/60 rounded-xl px-4 py-3 mt-3 mb-3 outline-none text-dark placeholder:text-dark/40 "
-              />
-              {/* Commentaire */}
+              />*/}
+              {/* Commentaire 
               <textarea
               placeholder="Votre commentaires ...."
                rows={3}     
@@ -101,7 +126,7 @@ export default function Restaurant() {
               <button className="bg-dark text-white px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-opacity mt-3">
                 Envoyer l'avis 
               </button>
-              
+              */}
 
            </div>
 

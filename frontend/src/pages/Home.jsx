@@ -1,19 +1,42 @@
 import { useState } from "react";
-import { restaurants, categories } from "../data/restaurant";
 import RestaurantCard from "../components/RestaurantCard";
+import { useEffect } from "react";
+import { fetchRestaurants, fetchCategories } from "../services/api";
 
 export default function Home() {
-  const [search, setSearch] = useState("");
-  const [categoriesActive, setCategoriesActive] = useState("Tout");
+const [search, setSearch] = useState("");
+const [categoriesActive, setCategoriesActive] = useState("Tous");
+const [restaurants, setRestaurants] = useState([]);
+const [categories, setCategories] = useState([]);
+const [loading, setLoading] = useState(true);
 
-  const filtered = restaurants.filter((r) => {
-    const matchSearch =
-      r.nom.toLowerCase().includes(search.toLowerCase()) ||
-      r.quartier.toLowerCase().includes(search.toLowerCase());
-    const matchCat =
-      categoriesActive === "Tout" || r.categorie === categoriesActive;
-    return matchSearch && matchCat;
-  });
+useEffect(()  => {
+  async function loadData() {
+    try {
+      const [restaurantsData, categoriesData] = await Promise.all([
+        fetchRestaurants(),
+        fetchCategories()
+      ]);
+      setRestaurants(restaurantsData);
+      setCategories(categoriesData);
+    }catch (error) {
+      console.error("Erreur lors du chargement des données :", error);
+    }finally {
+      setLoading(false);
+    }
+  }loadData();
+}, []);
+const filtered = restaurants.filter((resto) => {
+  const matchesSearch = resto.nom.toLowerCase().includes(search.toLowerCase()) || resto.quartier.toLowerCase().includes(search.toLowerCase());
+  const matchesCategory = categoriesActive === "Tous" || resto.categorie === categoriesActive;
+  return matchesSearch && matchesCategory;
+});
+if (loading){
+  return <main className="px-4 md:px-12 py-6 text-center">
+    <p>Chargement en cours...</p>
+  </main>;
+}
+
 
   return (
     <main className="px-4 md:px-12 py-6">
@@ -52,7 +75,7 @@ export default function Home() {
                 : "glass-card text-dark hover:bg-white/80"
             }`}
           >
-            <img src={cat.icon} alt={cat.nom} className="w-5 h-5 object-contain" />
+            <img src={`/icons/${cat.icon}`} alt={cat.nom} className="w-5 h-5 object-contain" />
             <span>{cat.nom}</span>
           </button>
         ))}
