@@ -70,7 +70,7 @@ router.post("/:id/photo", requireAuth, upload.single("photo"), async (req, res)=
         return res.status(400).json({staus:"error",  message:"no files received"});
     }
     try{
-        const restaurantResult = await pool.query("select user_id from restarants where id= $1", [id]);
+        const restaurantResult = await pool.query("select user_id from restaurants where id= $1", [id]);
         if (restaurantResult.rows.length === 0){
             return res.status(404).json({status:"error", message:"Restaurant not found"});
         }
@@ -80,22 +80,22 @@ router.post("/:id/photo", requireAuth, upload.single("photo"), async (req, res)=
          const fileName = `${id}-${Date.now()}-${req.file.originalname}`;
 
          const {error:uploadError} = await supabase.storage
-         .from("restaurant-photo")
+         .from("restaurant_photo")
          .upload(fileName, req.file.buffer, {contentType: req.file.mimetype});  
 
          if (uploadError){
-            console.err(uploadError.message);
+            console.error(uploadError.message);
         return res.status(500).json({status:"error", message:"upload echec"});
          }
          const {data:publicUrlData} = supabase.storage.from("restaurant-photos").getPublicUrl(fileName);
 
          const updateResult = await pool.query (
-            "update restaurants set photo_url_path = $1 where id =$2 returning *", [publicUrlData.publicUrl, id]
+            "update restaurants set photo_upload_path = $1 where id =$2 returning *", [publicUrlData.publicUrl, id]
          );
          res.json(updateResult.rows[0]);
-    }catch (err){
+    }catch (err) {
         console.error(err.message);
-        res.status(500).json({status:"error", message:err.message});
+        res.status(500).json({ status: "error", message: err.message });
     }
 })
 
