@@ -7,6 +7,7 @@ export default function Restaurant() {
   const [resto , setResto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] =useState (false);
+  
 
   useEffect(()=>{
     async function loadData() {
@@ -34,12 +35,13 @@ export default function Restaurant() {
       </div>
     );
   }
-
+const photo = resto.photo_upload_path || resto.photo_url;
   return (
     <main className="px-4 md:px-12 py-6">
+      
             <div className="relative h-64 md:h-80 rounded-3xl overflow-hidden mb-6">
                 <img
-                src={resto.photo_url}
+                src={photo}
                 alt={resto.nom}
                 className="w-full h-full object-cover"
                 />
@@ -53,7 +55,7 @@ export default function Restaurant() {
             <div className="glass-card p-5 mb-6 flex flex-wrap gap-6">
               <div className="flex items-center gap-2">
                 <span>⭐</span>
-                <span className="font-bold text-dark">{resto.note}</span>
+                <span className="font-bold text-dark">{Number(resto.note_moyenne).toFixed(1)}</span>
                 <span className="text-dark/40">({resto.nombre_avis} avis)</span>
               </div>
               <div className="flex items-center gap-2">

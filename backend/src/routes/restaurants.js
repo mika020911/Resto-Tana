@@ -87,7 +87,7 @@ router.post("/:id/photo", requireAuth, upload.single("photo"), async (req, res)=
             console.error(uploadError.message);
         return res.status(500).json({status:"error", message:"upload echec"});
          }
-         const {data:publicUrlData} = supabase.storage.from("restaurant-photos").getPublicUrl(fileName);
+         const {data:publicUrlData} = supabase.storage.from("restaurant_photo").getPublicUrl(fileName);
 
          const updateResult = await pool.query (
             "update restaurants set photo_upload_path = $1 where id =$2 returning *", [publicUrlData.publicUrl, id]
